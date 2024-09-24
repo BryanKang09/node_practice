@@ -1,31 +1,37 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
-const uri = `mongodb://localhost:27017`;
-const client = new MongoClient(uri);
+const express = require ('express');
+const app = express ();
 
+// app.get("/", (req, res) => {
+//     // console.log("Root route accessed");
+//     res.send("hello world");
+// });
 
-async function run() {
-    const database = client.db('firstDB');
-    const users = database.collection('users');
+// app.get("/about", (req, res) => {
+//     // console.log("Root route accessed");
+//     res.send("about world");
+// });
 
-    // const userData = await users.insertOne({name: "jenny", age: 15})
-    // console.log("results,", userData)
-    
-    // const userlist = [{name:"andy", age:16},{name: "rose", age: 20}]
-    // const userlistResults = await users.insertMany(userlist)
-    // console.log(userlistResults)
+const token = null
 
-    // const findUser = await users.findOne({age:{$gt:15}});
-    // console.log ("result",findUser)
-
-    // const updateUser = await users.updateOne({name: "andy"},{$set: {age: 36}})
-    // console.log(updateUser)
-
-    // const deleteUsers = await users.deleteMany({age:{$gt:20}})
-    // console.log(deleteUsers)
-
-    const findUser = await users.find({}).project({_id:0}).toArray()
-    console.log(findUser)
+const checkAuth = (req,res, next) => {
+    console.log("admin permit");
+    next();
 }
-  
-run();
 
+const getUser = (req,res) => {
+    res.send("user info")
+    console.log("user info");
+}
+
+const checkToken = (req,res) => {
+    if (token){
+        next();
+    }
+    res.send("you don't have token");
+}
+
+app.get("/users", checkAuth, checkToken, getUser)
+
+app.listen(5000,()=>{
+    console.log("server on")
+})
